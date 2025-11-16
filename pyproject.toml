@@ -1,0 +1,26 @@
+[project]
+name = "determine-github-owner"
+version = "0.1.0"
+description = ""
+keywords = []
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["structlog-config==0.6.0"]
+authors = [{ name = "Michael Bianco", email = "mike@mikebian.co" }]
+urls = { "Repository" = "https://github.com/iloveitaly/determine-github-owner" }
+
+# additional packaging information: https://packaging.python.org/en/latest/specifications/core-metadata/#license
+[project.scripts]
+determine-github-owner = "determine_github_owner:main"
+
+[build-system]
+requires = ["uv_build>=0.8.11,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+# avoids the src/ directory structure
+module-root = ""
+
+[dependency-groups]
+dev = ["pytest>=8.3.3","pyright>=1.1.380","ruff>=0.8.0"]
+
