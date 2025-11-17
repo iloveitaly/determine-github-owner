@@ -1,6 +1,6 @@
 # determine-github-owner
 
-Find contact information for GitHub repository owners and package maintainers.
+Intelligently discover contact information for GitHub repository owners using AI.
 
 ## Installation
 
@@ -18,68 +18,69 @@ pip install determine-github-owner
 
 ### Environment Variables
 
-Set your GitHub token for API access:
+**Required**: Set your GitHub token for API access:
 
 ```bash
 export GITHUB_TOKEN="your_github_token_here"
 ```
 
-Optional: Set NPM token for authenticated NPM registry requests:
+**Required**: Set your AI provider API key. For OpenAI (default):
+
+```bash
+export OPENAI_API_KEY="your_openai_key_here"
+```
+
+Or for Anthropic Claude:
+
+```bash
+export ANTHROPIC_API_KEY="your_anthropic_key_here"
+```
+
+**Optional**: Set NPM token for authenticated NPM registry requests:
 
 ```bash
 export NPM_TOKEN="your_npm_token_here"
 ```
 
-### CLI Commands
+### CLI Command
 
-#### Get Owner Contact Information
-
-Get contact information from a GitHub username or repository URL:
+The tool uses an AI agent to intelligently discover the best way to contact a repository owner:
 
 ```bash
-determine-github-owner owner iloveitaly
-determine-github-owner owner https://github.com/iloveitaly/determine-github-owner
+determine-github-owner https://github.com/iloveitaly/determine-github-owner
 ```
 
-Include top contributors (those with 5%+ of commits):
+By default, it uses OpenAI's GPT-4. You can specify a different model:
 
 ```bash
-determine-github-owner owner https://github.com/iloveitaly/determine-github-owner --include-contributors
+# Use Anthropic Claude
+determine-github-owner https://github.com/owner/repo --model anthropic:claude-3-5-sonnet-20241022
+
+# Use OpenAI GPT-4
+determine-github-owner https://github.com/owner/repo --model openai:gpt-4o
 ```
 
-#### Get Repository Information
+## How It Works
 
-Get detailed repository metadata including README, description, stars, etc:
+The tool:
 
-```bash
-determine-github-owner repo https://github.com/iloveitaly/determine-github-owner
-```
+1. Fetches repository metadata (description, README, language, etc.)
+2. Attempts to find the owner's email from their GitHub profile
+3. If not found, searches recent commit history for email addresses
+4. Passes all this information to an AI agent
+5. The AI agent intelligently uses available tools:
+   - Query PyPI for Python package author information
+   - Query NPM for JavaScript package maintainer information
+6. Returns the best contact information found
 
-#### Get PyPI Package Author
-
-Get author contact information from PyPI:
-
-```bash
-determine-github-owner pypi requests
-```
-
-#### Get NPM Package Maintainers
-
-Get maintainer contact information from NPM:
-
-```bash
-determine-github-owner npm express
-```
+The AI agent analyzes the repository context and strategically uses the available tools to discover the most relevant contact information.
 
 ## Features
 
-- Extract owner email from GitHub profile
-- Find emails from recent commit history
-- Get repository metadata and README content
-- Identify top contributors (5%+ contribution threshold)
-- Query PyPI package author information
-- Query NPM package maintainer contacts
-- Support for various GitHub URL formats
+- **AI-Powered Discovery**: Uses LLM to intelligently determine the best approach for finding contact info
+- **Multiple Data Sources**: GitHub profiles, commit history, PyPI, NPM
+- **Flexible Model Support**: Works with OpenAI GPT-4 or Anthropic Claude
+- **Tool-Based Architecture**: AI agent can call package registry APIs as needed
 
 ## Development
 
