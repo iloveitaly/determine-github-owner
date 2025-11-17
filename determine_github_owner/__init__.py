@@ -2,6 +2,7 @@
 
 import click
 import json
+import os
 from structlog_config import configure_logger
 from pydantic_ai import Agent
 
@@ -41,7 +42,11 @@ If you find package information through the tools, include those emails in your 
 
 @click.command()
 @click.argument("github_url")
-@click.option("--model", default="openai:gpt-4o", help="AI model to use (e.g., openai:gpt-4o, anthropic:claude-3-5-sonnet-20241022)")
+@click.option(
+    "--model",
+    default=lambda: os.environ.get("AI_MODEL", "openai:gpt-4o"),
+    help="AI model to use. Supports openai:*, anthropic:*, openrouter:*, etc. Can also be set via AI_MODEL env var.",
+)
 def cli(github_url: str, model: str):
     """Discover owner contact information for a GitHub repository using AI."""
     github_user, github_repo = parse_github_url(github_url)
@@ -50,7 +55,7 @@ def cli(github_url: str, model: str):
         click.echo("Error: Please provide a full repository URL", err=True)
         raise click.Abort()
 
-    logger.info("discovering_owner", repo=f"{github_user}/{github_repo}")
+    logger.info("discovering_owner", repo=f"{github_user}/{github_repo}", model=model)
 
     owner_github_email = github_email(github_user)
     repo_info = get_repository_info(github_user, github_repo)
