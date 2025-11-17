@@ -1,31 +1,34 @@
 """
+GitHub repository information retrieval.
+
 * github user data
 * event data to see if an email was included in a recent commit
 """
 
 from urllib.request import Request, urlopen
 import json
-import os
-import sys
-import logging
-from urllib.request import Request, urlopen
-import json
-import os
-import sys
-from decouple import config
-from github.package_managers import ContactInfo
-from utils import log
 import typing as t
+from structlog_config import configure_logger
 
-# Move token check to module level
-GITHUB_TOKEN = config("GITHUB_TOKEN", default="", cast=str)
-if not GITHUB_TOKEN:
-    raise EnvironmentError("GITHUB_TOKEN is not set or is empty")
+from determine_github_owner.models import ContactInfo
+
+log = configure_logger()
+
+
+def get_github_token() -> str:
+    """Get GitHub token from environment."""
+    import os
+
+    token = os.environ.get("GITHUB_TOKEN", "")
+    if not token:
+        raise EnvironmentError("GITHUB_TOKEN is not set or is empty")
+    return token
 
 
 def _make_github_request(url: str) -> dict:
     """Make authenticated request to GitHub API."""
-    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    token = get_github_token()
+    headers = {"Authorization": f"token {token}"}
     request = Request(url, headers=headers)
     response = urlopen(request)
     return json.loads(response.read())
@@ -36,7 +39,6 @@ def get_top_contributors(owner: str, repo: str) -> str:
     url = f"https://api.github.com/repos/{owner}/{repo}/contributors"
     contributors = _make_github_request(url)
 
-    # if a user did not contribute at least 5% of the total commits, they are not included
     contribution_minimum = 0.05
 
     total_commits = sum(c["contributions"] for c in contributors)
@@ -86,15 +88,12 @@ def github_recent_commits(github_user: str) -> list[str]:
     emails = []
     push_events = [event for event in events if event["type"] == "PushEvent"]
 
-    # Emails to exclude
     excluded_emails = ["@users.noreply.github.com", "snyk-bot@snyk.io"]
 
     for event in push_events:
         if event["actor"]["login"] != github_user:
             continue
-        email_from_commit = event["payload"]["commits"][0]["author"][
-            "email"
-        ]  # Filter out excluded emails
+        email_from_commit = event["payload"]["commits"][0]["author"]["email"]
         if not any(excluded in email_from_commit for excluded in excluded_emails):
             emails.append(email_from_commit)
 
@@ -117,14 +116,11 @@ def parse_github_url(url_or_username: str) -> tuple[str, str | None]:
     """
     import re
 
-    # Clean up URL if provided
     url = url_or_username.strip().replace("https://", "").replace("http://", "")
 
-    # Handle just username format
     if "/" not in url:
         return url, None
 
-    # Extract from github URL
     github_pattern = r"(?:github\.com/)?([^/]+)(?:/([^/#]+))?"
     match = re.search(github_pattern, url)
 
@@ -144,16 +140,13 @@ def get_repository_info(owner: str, repo: str) -> dict[str, t.Any]:
 
     Returns:
         Dictionary containing:
-        - basic: Basic rexpository information (description, language, stars, etc)
+        - basic: Basic repository information (description, language, stars, etc)
         - readme: README content if available
         - topics: Repository topics/tags
-        - license: License information if available
     """
-    # Get main repository information
     repo_url = f"https://api.github.com/repos/{owner}/{repo}"
     repo_data = _make_github_request(repo_url)
 
-    # Get README content
     try:
         readme_url = f"https://api.github.com/repos/{owner}/{repo}/readme"
         readme_data = _make_github_request(readme_url)
@@ -166,7 +159,6 @@ def get_repository_info(owner: str, repo: str) -> dict[str, t.Any]:
         log.warning("failed_to_fetch_readme", owner=owner, repo=repo, error=str(e))
         readme_content = ""
 
-    # Extract relevant information
     info = {
         "basic": {
             "name": repo_data.get("name"),
@@ -196,8 +188,8 @@ def get_repository_info(owner: str, repo: str) -> dict[str, t.Any]:
     return info
 
 
-# TODO upstream to funcy pipe
 def distinct_on(seq, key):
+    """Get distinct items from sequence based on key function."""
     seen = set()
     seen_add = seen.add
     return [x for x in seq if key(x) not in seen and not seen_add(key(x))]
@@ -206,10 +198,7 @@ def distinct_on(seq, key):
 def get_emails_from_commits(
     owner: str, repo: str, username: str, limit: int = 10
 ) -> list[ContactInfo]:
-    """
-    Get a user's recent commits on a repository.
-    """
-
+    """Get a user's recent commits on a repository."""
     commits = get_user_commits(owner, repo, username, limit)
     emails = [parse_email_from_commit(commit) for commit in commits]
     distinct_emails = distinct_on(emails, key=lambda x: x.email)
@@ -235,7 +224,6 @@ def get_user_commits(
     url = f"https://api.github.com/repos/{owner}/{repo}/commits"
     params = {"author": username, "per_page": limit}
 
-    # Add params to URL
     query_string = "&".join(f"{k}={v}" for k, v in params.items())
     full_url = f"{url}?{query_string}"
 
@@ -249,9 +237,6 @@ def get_user_commits(
     )
 
     return commits
-
-
-from models import ContactInfo
 
 
 def parse_email_from_commit(commit: dict) -> ContactInfo:
@@ -273,40 +258,9 @@ def parse_email_from_commit(commit: dict) -> ContactInfo:
     """
     author = commit.get("commit", {}).get("author", {})
 
-    # Exclude noreply addresses
     email = author.get("email", "")
 
     if "@users.noreply.github.com" in email:
         return None
 
     return ContactInfo(name=author.get("name"), email=email)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: script.py <github_username_or_url>")
-        sys.exit(1)
-
-    input_value = sys.argv[1]
-    owner, repo = parse_github_url(input_value)
-
-    # If repo provided, show contributors
-    if repo:
-        print(f"\nRepository information for {owner}/{repo}:")
-        repo_info = get_repository_info(owner, repo)
-        print(json.dumps(repo_info, indent=2))
-        print(get_top_contributors(owner, repo))
-
-        # Get user's commits and most recent patch
-        commits = get_user_commits(owner, repo, owner)
-        if commits:
-            latest_commit = commits[0]
-            patch_data = get_commit_patch(owner, repo, latest_commit["sha"])
-            print("\nLatest commit patch:")
-            print(patch_data["patch"])
-
-    github_user_email = github_email(owner)
-    recent_commit_emails = github_recent_commits(owner)
-    all_emails = list(set([github_user_email] + recent_commit_emails))
-    print(f"\nEmails for {owner}:")
-    [print(e) for e in all_emails]
