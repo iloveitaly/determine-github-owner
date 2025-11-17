@@ -1,11 +1,16 @@
 [project]
 name = "determine-github-owner"
 version = "0.1.0"
-description = ""
-keywords = []
+description = "Find contact information for GitHub repository owners and package maintainers"
+keywords = ["github", "contact", "repository", "maintainer"]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["structlog-config==0.6.0"]
+dependencies = [
+    "click>=8.3.1",
+    "pydantic>=2.12.4",
+    "requests>=2.32.5",
+    "structlog-config==0.6.0",
+]
 authors = [{ name = "Michael Bianco", email = "mike@mikebian.co" }]
 urls = { "Repository" = "https://github.com/iloveitaly/determine-github-owner" }
 
