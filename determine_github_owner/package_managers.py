@@ -1,4 +1,11 @@
-"""Package manager contact information retrieval."""
+"""
+Package manager contact information retrieval.
+
+Originally extracted from these bash functions:
+
+$ npm_email="$(http GET "https://registry.npmjs.org/-/user/org.couchdb.user:$github_user" | jq -r '.email | select( . != null )')"
+$ http https://pypi.org/pypi/$project_name/json | jq -r '.info.author_email'
+"""
 
 import re
 import os
@@ -36,7 +43,28 @@ def _make_npm_request(url: str) -> dict:
 
 
 def get_npm_package_info(package_name: str) -> dict:
-    """Get package metadata from NPM registry."""
+    """
+    Get package metadata from NPM registry. Here's an example response.
+
+    {'_id': 'lunch-money',
+     'name': 'lunch-money',
+     'dist-tags': {'latest': '0.5.0'},
+     'versions': {'0.5.0': {'name': 'lunch-money',
+       'version': '0.5.0',
+       'author': {'name': 'Joe Hoyle'},
+       'contributors': [{'name': 'Michael Bianco',
+         'email': 'mike@mikebian.co',
+         'url': 'https://mikebian.co/about'}],
+       'maintainers': [{'name': 'joehoyle', 'email': 'joehoyle@gmail.com'},
+        {'name': 'iloveitaly', 'email': 'mike@mikebian.co'}]}},
+     'maintainers': [{'email': 'joehoyle@gmail.com', 'name': 'joehoyle'},
+      {'email': 'lunchbag@gmail.com', 'name': 'lunchbag'},
+      {'email': 'mike@mikebian.co', 'name': 'iloveitaly'}],
+     'author': {'name': 'Joe Hoyle'},
+     'contributors': [{'name': 'Michael Bianco',
+       'email': 'mike@mikebian.co',
+       'url': 'https://mikebian.co/about'}]}
+    """
     url = f"https://registry.npmjs.org/{package_name}"
     return _make_npm_request(url)
 

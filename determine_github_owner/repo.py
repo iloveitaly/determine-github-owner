@@ -1,4 +1,9 @@
-"""GitHub repository information retrieval."""
+"""
+GitHub repository information retrieval.
+
+* github user data
+* event data to see if an email was included in a recent commit
+"""
 
 from urllib.request import Request, urlopen
 import json
@@ -243,6 +248,13 @@ def parse_email_from_commit(commit: dict) -> ContactInfo:
 
     Returns:
         ContactInfo object with name and email from commit author
+
+    Example commit author data:
+        commit['commit']['author'] = {
+            'name': 'Dror Speiser',
+            'email': 'dror.mastershin@gmail.com',
+            'date': '2017-10-18T17:11:01Z'
+        }
     """
     author = commit.get("commit", {}).get("author", {})
 
