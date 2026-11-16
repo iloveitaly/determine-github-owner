@@ -1,6 +1,23 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
+resolution-markers = [
+    "python_full_version >= '3.12'",
+    "python_full_version < '3.12'",
+]
+
+[[package]]
+name = "anyio"
+version = "4.14.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "idna" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/cc/a381afa6efea9f496eff839d4a6a1aed3bfafc7b3ab4b0d1b243a12573dd/anyio-4.14.2.tar.gz", hash = "sha256:cfa139f3ed1a23ee8f88a145ddb5ac7605b8bbfd8592baacd7ce3d8bb4313c7f", size = 260176, upload-time = "2026-07-12T20:29:07.082Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/da/35/f2287558c17e29fafc8ef3daf819bb9834061cfa43bff8014f7df7f63bdc/anyio-4.14.2-py3-none-any.whl", hash = "sha256:9f505dda5ac9f0c8309b5e8bd445a8c2bf7246f3ce950121e45ea15bc41d1494", size = 125813, upload-time = "2026-07-12T20:29:05.763Z" },
+]
 
 [[package]]
 name = "colorama"
@@ -27,13 +44,54 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "structlog-config", specifier = "==0.7.0" }]
+requires-dist = [{ name = "structlog-config", specifier = "==0.10.0" }]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "pyright", specifier = ">=1.1.380" },
     { name = "pytest", specifier = ">=8.3.3" },
     { name = "ruff", specifier = ">=0.8.0" },
+]
+
+[[package]]
+name = "fastapi-ipware"
+version = "0.1.2"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.12'",
+]
+dependencies = [
+    { name = "python-ipware", version = "3.0.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "starlette" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e4/96/8135bdc5a9f413a71c3ba68ca76cbf98b3a8d52a2c3da9fda846fa04b341/fastapi_ipware-0.1.2.tar.gz", hash = "sha256:8ea796604040c86d0478064651f30480354b9b57d545bff2e38007c67a48d5bb", size = 4319, upload-time = "2026-01-23T23:24:35.708Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/5c/40dcc90e38400615ca342eb0609f87a89e0d197705cf06bb4dcb51f29151/fastapi_ipware-0.1.2-py3-none-any.whl", hash = "sha256:508e1186c6a9a6d384a95dfa616c2d7dba3119b589b2fc453ba2c3797afd2f66", size = 5068, upload-time = "2026-01-23T23:24:36.773Z" },
+]
+
+[[package]]
+name = "fastapi-ipware"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.12'",
+]
+dependencies = [
+    { name = "python-ipware", version = "4.1.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "starlette" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/54/dd/29c52a79948f87dc5f8895124c7d997a0f614bc4c51aebd50a1e30bf31b4/fastapi_ipware-1.0.0.tar.gz", hash = "sha256:66e845d88eba958f4e1286278a4f8346239169fe1aa41cc126a4ac5e11f64bf9", size = 6751, upload-time = "2026-10-11T14:12:56.291Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/e4/75d3da0844cfd1d65a31ebaa7f0bab5b84c50b469cd7eefd445546a44754/fastapi_ipware-1.0.0-py3-none-any.whl", hash = "sha256:fd9768b89cc38e27a4077d2834669389a67cc46e7d29082145368ffcbd670b8b", size = 7457, upload-time = "2026-10-11T14:12:55.407Z" },
+]
+
+[[package]]
+name = "idna"
+version = "3.20"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz", hash = "sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44", size = 216463, upload-time = "2026-09-17T14:11:04.752Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl", hash = "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c", size = 69583, upload-time = "2026-09-17T14:11:03.168Z" },
 ]
 
 [[package]]
@@ -190,9 +248,24 @@ wheels = [
 name = "python-ipware"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.12'",
+]
 sdist = { url = "https://files.pythonhosted.org/packages/9e/60/da4426c3e9aee56f08b24091a9e85a0414260f928f97afd0013dfbd0332f/python_ipware-3.0.0.tar.gz", hash = "sha256:9117b1c4dddcb5d5ca49e6a9617de2fc66aec2ef35394563ac4eecabdf58c062", size = 16609, upload-time = "2024-04-19T20:00:58.938Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/08/bd/ccd7416fdb30f104ddf6cfd8ee9f699441c7d9880a26f9b3089438adee05/python_ipware-3.0.0-py3-none-any.whl", hash = "sha256:fc936e6e7ec9fcc107f9315df40658f468ac72f739482a707181742882e36b60", size = 10761, upload-time = "2024-04-19T20:00:57.171Z" },
+]
+
+[[package]]
+name = "python-ipware"
+version = "4.1.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.12'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/80/1c/dca9478d5e2c51c5effcc8fbc9903c40c59a8f107d2ef5ea2e4cf53085f0/python_ipware-4.1.1.tar.gz", hash = "sha256:fd6102058e74c29112b4376f8abbae718852c95f8de6965801de88ca9780d22f", size = 40567, upload-time = "2026-10-01T18:44:47.003Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fb/63/4c5c354d10ec19d6258acc04cb8bbc36ba670019e2ad9c60e8289af9e845/python_ipware-4.1.1-py3-none-any.whl", hash = "sha256:52eedd4cb7bb9e1bb6b9dd92db974e729fe54be22e1389703e21c60344b9f039", size = 27636, upload-time = "2026-10-01T18:44:46.055Z" },
 ]
 
 [[package]]
@@ -222,6 +295,19 @@ wheels = [
 ]
 
 [[package]]
+name = "starlette"
+version = "1.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/48/bb/3d8757f21e9a53d9035c9eb039a777047139a16bfdbedfc7a58241c3d914/starlette-1.10.0.tar.gz", hash = "sha256:b8399098d4c1e3522734f7235dc79b1fc967f96cf139c81e0fa30479e0685f9b", size = 2734356, upload-time = "2026-10-24T15:04:12.342Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/2e/947cfe02def9371c07cd5bf5b6b61c829e9aecb9904db02a66cfafbc1eec/starlette-1.10.0-py3-none-any.whl", hash = "sha256:478c0ab3b4ced6e82719849c118fa406f0278a3499c1a898cd15cd31bdc38ce4", size = 80571, upload-time = "2026-10-24T15:04:10.371Z" },
+]
+
+[[package]]
 name = "structlog"
 version = "25.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -232,17 +318,18 @@ wheels = [
 
 [[package]]
 name = "structlog-config"
-version = "0.7.0"
+version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "fastapi-ipware", version = "0.1.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "fastapi-ipware", version = "1.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "orjson" },
     { name = "python-decouple-typed" },
-    { name = "python-ipware" },
     { name = "structlog" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/c4/b14adcbcdb0fef1db2b8f48df64a6ebe16ba3f2febc907bf2c6739f0720a/structlog_config-0.7.0.tar.gz", hash = "sha256:f7957b8f93de7d70b15673a28da7441674018d98eaf1f598b3caa1ee521ca074", size = 17919, upload-time = "2025-11-12T19:27:59.607Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/06/e07b6fccae58c3db317d5611d024dacab6bb6496e745cfa607522fb25c06/structlog_config-0.10.0.tar.gz", hash = "sha256:a71b57a67c3b009ae8dca1a729a87657beb420325af63fffd440ffa55b5ba851", size = 21628, upload-time = "2026-02-06T21:35:50.014Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/1b/471dc2cb8f57be16a4f63b5ddae266d3fcff9ebba83ee352bc045f4e2c6b/structlog_config-0.7.0-py3-none-any.whl", hash = "sha256:86b0d3ad96ae1b69e56219a356dc5578989c33acecca746813559adea914dc3a", size = 22597, upload-time = "2025-11-12T19:27:58.574Z" },
+    { url = "https://files.pythonhosted.org/packages/70/c4/6971ebe7106c692c42b1769daea6c7c583f8857f06229aba280724e568e9/structlog_config-0.10.0-py3-none-any.whl", hash = "sha256:02b818be4e1f8d99cf31c92686aab1d5d2ff6dc7f735bbfa9286cb94da3068a7", size = 26933, upload-time = "2026-02-06T21:35:51.288Z" },
 ]
 
 [[package]]
